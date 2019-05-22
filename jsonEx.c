@@ -125,7 +125,7 @@ int main()
     int size;    // 문서 크기
     int i;
     // 파일에서 JSON 문서를 읽음, 문서 크기를 구함
-    char *doc = readFile("example.json", &size);
+    char *doc = readFile("ex3.json", &size);
     if (doc == NULL)
         return -1;
 
