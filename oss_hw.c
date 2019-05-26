@@ -101,6 +101,7 @@ void parseJSON(char *doc, int size, JSON *json)
             searchIndex = searchIndex + stringLength + 1;  
         }
         break;
+	
         }
 
         searchIndex++; 
