@@ -10,7 +10,9 @@
 	"frameworks": "*",
 	"platforms": "*",
 	"examples": [
-		"example/*.c"
+		"ex1.c",
+		"ex2.c",
+		"ex3.c"
 	],
 	"exclude": "test"
 }

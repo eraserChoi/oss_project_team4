@@ -22,30 +22,47 @@ struct newTOKEN (char *string, int number, char array)
 	return newToken;
 }
 
-int main()
+char *readFile(char *filename, int *readSize)
 {
-	char buffer[MAX] = {0};
-	char *readFile;
-	FILE *fp = fopen("example.json", "rb");
-	if (fp == NULL) return -1;
-	int size;
-	fseek(fp, 0, SEEK_END);
-	size = ftell(fp);
-	rewind(fp);
-	readFile = (char *)calloc(size+1,sizeof(char));
-	if (fread(readFile, size, 1, fp) < 1) {
-		size = 0;
-		fclose(fp);
-		return -1;
-	}
-	fclose(fp);
-	if (readFile[0] != '{') {
-		printf("This is not json file >>>>> missing '{'\n");
-		return -1;
-	}
-	printf("%s\n",readFile);
-	int object=0,count=0,start=0,j=0;
-	for (int i=0;i<size;i++) {
+    FILE *fp = fopen(filename, "rb");
+    if (fp == NULL)
+        return NULL;
+    int size;
+    char *buffer;
+    fseek(fp, 0, SEEK_END);
+    size = ftell(fp);
+    fseek(fp, 0, SEEK_SET);
+    buffer = malloc(size + 1);
+    memset(buffer, 0, size + 1);
+    if (fread(buffer, size, 1, fp) < 1)
+    {
+        *readSize = 0;
+        free(buffer);
+        fclose(fp);        
+        return NULL;
+    }
+    *readSize = size;
+    fclose(fp);
+    return buffer;
+}
 
-	}
+void parse(char *doc, int size, JSON *json)
+{
+	int tokenIndex=0;
+	int pos=0;
+	if (doc[pos] != '{') return;
+	pos++;
+	while (pos<size) {
+			
+}
+
+int main(int argc, char **argv)
+{
+    	int size;
+    	char *doc = readFile(argv[1], &size);
+    	if (doc == NULL)
+        	return -1;
+	JSON json = { 0, };
+	parse(doc, size, &json);
+	return 0;
 }

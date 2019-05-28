@@ -203,12 +203,12 @@ void freeJSON(JSON *json) // JSON 해제 함수
     }
 }
 
-int main()
+int main(int argc, char **argv)
 {
     int size;    // 문서 크기
 
     // 파일에서 JSON 문서를 읽음, 문서 크기를 구함
-    char *doc = readFile("number.json", &size);
+    char *doc = readFile(argv[1], &size);
     if (doc == NULL)
         return -1;
 
