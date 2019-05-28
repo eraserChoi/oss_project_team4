@@ -1,4 +1,6 @@
 {
+	"studentName": "foo",
+	"studentID": 21500266,
 	"name": "jsmn",
 	"keywords": "json",
 	"description": "Minimalistic JSON parser/tokenizer in C. It can be easily integrated into resoource-limited or embedded projects",
@@ -10,7 +12,9 @@
 	"frameworks": "*",
 	"platforms": "*",
 	"examples": [
-		"ex1.c"
+		"ex1.c",
+		"ex2.c",
+		"ex3.c"
 	],
 	"exclude": "test"
 }
