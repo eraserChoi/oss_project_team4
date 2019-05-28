@@ -108,6 +108,38 @@ void parseJSON(char *doc, int size, JSON *json)
                     tokenIndex++;    
                     pos = pos + stringLength + 1;    
 		}
+		if (doc[pos] == '0' || doc[pos] == '1'
+			|| doc[pos] == '2'
+			|| doc[pos] == '3'
+			|| doc[pos] == '4'
+			|| doc[pos] == '5'
+			|| doc[pos] == '6'
+			|| doc[pos] == '7'
+			|| doc[pos] == '8'
+			|| doc[pos] == '9'
+			|| doc[pos] == '-')
+		{
+			char *begin = doc + pos;
+           	 	char *end;
+            		char *buffer;
+            		end = strchr(doc + pos, ',');
+            		if (end == NULL)
+            		{
+                		end = strchr(doc + pos, '}');
+                		if (end == NULL)   
+                    		break;          
+            		}	
+            		int stringLength = end - begin;   
+            		buffer = malloc(stringLength + 1);
+            		memset(buffer, 0, stringLength + 1);
+            		memcpy(buffer, begin, stringLength);
+            		json->tokens[tokenIndex].type = NUMBER;
+		        json->tokens[tokenIndex].isObjectList = true;	
+            		json->tokens[tokenIndex].number = atof(buffer);
+            		free(buffer);   
+            		tokenIndex++;    
+            		pos = pos + stringLength + 1;                    
+	       	}
                 pos++;   
 	    }
 	}
@@ -123,8 +155,7 @@ void parseJSON(char *doc, int size, JSON *json)
                 {
                     char *begin = doc + pos + 1;
                     char *end = strchr(begin, '"');
-                    if (end == NULL)   
-                        break;         
+                    if (end == NULL) break;         
                     int stringLength = end - begin;   
                     json->tokens[tokenIndex].type = STRING;
                     json->tokens[tokenIndex].string = malloc(stringLength + 1);
@@ -134,7 +165,40 @@ void parseJSON(char *doc, int size, JSON *json)
                     tokenIndex++;    
                     pos = pos + stringLength + 1;  
                 }
-                pos++;  
+      
+	        if (doc[pos] == '0' || doc[pos] == '1'
+			|| doc[pos] == '2'
+			|| doc[pos] == '3'
+			|| doc[pos] == '4'
+			|| doc[pos] == '5'
+			|| doc[pos] == '6'
+			|| doc[pos] == '7'
+			|| doc[pos] == '8'
+			|| doc[pos] == '9'
+			|| doc[pos] == '-')
+		{
+			char *begin = doc + pos;
+           	 	char *end;
+            		char *buffer;
+            		end = strchr(doc + pos, ',');
+            		if (end == NULL)
+            		{
+                		end = strchr(doc + pos, '}');
+                		if (end == NULL)   
+                    		break;          
+            		}	
+            		int stringLength = end - begin;   
+            		buffer = malloc(stringLength + 1);
+            		memset(buffer, 0, stringLength + 1);
+            		memcpy(buffer, begin, stringLength);
+            		json->tokens[tokenIndex].type = NUMBER;
+		        json->tokens[tokenIndex].isArray = true;	
+            		json->tokens[tokenIndex].number = atof(buffer);
+            		free(buffer);   
+            		tokenIndex++;    
+            		pos = pos + stringLength + 1;                    
+	       	}
+                pos++;
             }
         }
         break;
@@ -208,12 +272,13 @@ int main(int argc, char **argv)
 //  printf("%d\n",json.tokens[3].type);
     char buf[256]= { "0" };
     double temp;
-/*  for (int j=0;j<8;j++){
+/*    for (int j=0;j<TOKEN_COUNT;j++){
 //    	if (json.tokens[j].type==0)
 //	    printf("string\n");
 //    	else 
 //	    printf("integer\n");
-	if (json.tokens[j].type == 0)
+	if (json.tokens[j].string == NULL) break;
+	else if (json.tokens[j].type == 0)
 		printf("%s\n",json.tokens[j].string);
 	else
 		printf("%f\n",json.tokens[j].number);
@@ -236,7 +301,10 @@ int main(int argc, char **argv)
 			// if the end of token is met
 			// don't print and just break loop
 			if (json.tokens[i].isObjectList == false) break;
-			printf("\t%s : %s\n",json.tokens[i].string,json.tokens[i+1].string);
+			else if (json.tokens[i+1].type == 1) {
+				printf("\t%s : %d\n",json.tokens[i].string,(int)json.tokens[i+1].number);}
+			else {
+				printf("\t%s : %s\n",json.tokens[i].string,json.tokens[i+1].string);}
 			i+=2;
 		}
 		if (json.tokens[i+1].type == 1) {
@@ -255,7 +323,10 @@ int main(int argc, char **argv)
 			// if the end of token is met
 			// don't print and just break loop
 			if (json.tokens[i].isArray == false) break;
-			printf("\t%s\n",json.tokens[i].string);
+			else if (json.tokens[i].type == 1) {
+				printf("\t%d\n",(int)json.tokens[i].number);}
+			else {
+				printf("\t%s\n",json.tokens[i].string);}
 			i++;
 		}
 		if (json.tokens[i+1].type == 1) {

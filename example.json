@@ -7,14 +7,20 @@
 	"repository":
 	{
 		"type": "git",
-		"url": "https://github.com/zserge/jsmn.git"
+		"url": "https://github.com/zserge/jsmn.git",
+		"score": 123,
+		"test": 321,
+		"It_Is": "over"
 	},
 	"frameworks": "*",
 	"platforms": "*",
 	"examples": [
 		"ex1.c",
 		"ex2.c",
-		"ex3.c"
+		"ex3.c",
+		1234,
+		5678,
+		"It_Is_OVER"
 	],
 	"exclude": "test"
 }
