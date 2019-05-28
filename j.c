@@ -22,6 +22,7 @@ typedef struct _TOKEN {
         char *string;     
         double number;
     };
+    bool isObjectList;
     bool isArray;
 } TOKEN;
 
@@ -106,7 +107,7 @@ void parseJSON(char *doc, int size, JSON *json)
                     int stringLength = end - begin;   
                     json->tokens[tokenIndex].type = STRING;
                     json->tokens[tokenIndex].string = malloc(stringLength + 1);
-                    json->tokens[tokenIndex].isArray = true;
+                    json->tokens[tokenIndex].isObjectList = true;
                     memset(json->tokens[tokenIndex].string, 0, stringLength + 1);
                     memcpy(json->tokens[tokenIndex].string, begin, stringLength);
                     tokenIndex++;    
@@ -244,25 +245,15 @@ int main(int argc, char **argv)
     }*/
     int i;
 //  while (json.tokens[i].string != NULL){
-    for (i=0;i<8;i++){ 
+    for (i=0;i<TOKEN_COUNT;i++){ 
 	// to stop at the end of token list
-	if (strcmp(json.tokens[i].string,"0")==0) {
+	if (json.tokens[i].string == NULL) {
 		printf("null point character");
 		break;
 	}
-	// if the end of object list is met
-	// don't print but continue on to the next token in list
-    	if (strcmp(json.tokens[i].string,"}")==0) {
-		i++;
-		continue;
-	// if the end of array list is met
-	// don't print but continue on to the next token in list
-	} else if (strcmp(json.tokens[i].string,"]")==0) {
-		i++;
-		continue;
 	// if the beginning of object list is met
 	// don't print but continue on to the next token in list
-	} else if (strcmp(json.tokens[i+1].string,"{")==0) { 
+	} else if (json.tokens[i+1].isObjectList == true) { 
 	    	printf("%s : \n",json.tokens[i].string);
 	    	i+=2;
 		// print out tokens after '{'
@@ -275,7 +266,7 @@ int main(int argc, char **argv)
 			}
 	// if the beginning of array list is met
 	// don't print but continue on to the next token in list
-	} else if (strcmp(json.tokens[i+1].string,"[")==0) {
+	} else if (json.tokens[i+1].isArray == true) {
 		printf("%s : \n",json.tokens[i].string);
 		i+=2;
 		// print out tokens after '['
