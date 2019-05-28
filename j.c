@@ -9,8 +9,8 @@
 // enum structure
 // contains token type
 typedef enum _TOKEN_TYPE {
-    TOKEN_STRING,   
-    TOKEN_NUMBER,    
+    STRING, // 0
+    NUMBER, // 1
 } TOKEN_TYPE;
 
 // struct TOKEN
@@ -77,7 +77,7 @@ void parseJSON(char *doc, int size, JSON *json)
             if (end == NULL) 
                 break;       
             int stringLength = end - begin;   
-            json->tokens[tokenIndex].type = TOKEN_STRING;
+            json->tokens[tokenIndex].type = STRING;
             json->tokens[tokenIndex].string = malloc(stringLength + 1);
             memset(json->tokens[tokenIndex].string, 0, stringLength + 1);
             memcpy(json->tokens[tokenIndex].string, begin, stringLength);
@@ -90,7 +90,7 @@ void parseJSON(char *doc, int size, JSON *json)
         case '{':            
         {
 	    char *start = doc + pos;
-	    json->tokens[tokenIndex].type = TOKEN_STRING;
+	    json->tokens[tokenIndex].type = STRING;
 	    json->tokens[tokenIndex].string = malloc(2);
 	    memset(json->tokens[tokenIndex].string,0,2);
 	    memcpy(json->tokens[tokenIndex++].string,start, 1);
@@ -104,7 +104,7 @@ void parseJSON(char *doc, int size, JSON *json)
                     if (end == NULL)  
                         break;        
                     int stringLength = end - begin;   
-                    json->tokens[tokenIndex].type = TOKEN_STRING;
+                    json->tokens[tokenIndex].type = STRING;
                     json->tokens[tokenIndex].string = malloc(stringLength + 1);
                     json->tokens[tokenIndex].isArray = true;
                     memset(json->tokens[tokenIndex].string, 0, stringLength + 1);
@@ -115,7 +115,7 @@ void parseJSON(char *doc, int size, JSON *json)
                 pos++;   
 		if (doc[pos+1] == '}') {
 			char *sstart = doc + pos + 1;
-			json->tokens[tokenIndex].type = TOKEN_STRING;
+			json->tokens[tokenIndex].type = STRING;
 			json->tokens[tokenIndex].string = malloc(2);
 			memset(json->tokens[tokenIndex].string,0,2);
 			memcpy(json->tokens[tokenIndex++].string,sstart,1);
@@ -128,7 +128,7 @@ void parseJSON(char *doc, int size, JSON *json)
 	case '[':           
         {
             char *start = doc + pos;
-	    json->tokens[tokenIndex].type = TOKEN_STRING;
+	    json->tokens[tokenIndex].type = STRING;
 	    json->tokens[tokenIndex].string = malloc(2);
 	    memset(json->tokens[tokenIndex].string,0,2);
 	    memcpy(json->tokens[tokenIndex++].string,start, 1);
@@ -142,7 +142,7 @@ void parseJSON(char *doc, int size, JSON *json)
                     if (end == NULL)   
                         break;         
                     int stringLength = end - begin;   
-                    json->tokens[tokenIndex].type = TOKEN_STRING;
+                    json->tokens[tokenIndex].type = STRING;
                     json->tokens[tokenIndex].string = malloc(stringLength + 1);
                     json->tokens[tokenIndex].isArray = true;
                     memset(json->tokens[tokenIndex].string, 0, stringLength + 1);
@@ -153,7 +153,7 @@ void parseJSON(char *doc, int size, JSON *json)
                 pos++;  
 		if (doc[pos+1] == ']') {
 			char *sstart = doc + pos + 1;
-			json->tokens[tokenIndex].type = TOKEN_STRING;
+			json->tokens[tokenIndex].type = STRING;
 			json->tokens[tokenIndex].string = malloc(2);
 			memset(json->tokens[tokenIndex].string,0,2);
 			memcpy(json->tokens[tokenIndex++].string,sstart,1);
@@ -182,7 +182,7 @@ void parseJSON(char *doc, int size, JSON *json)
             buffer = malloc(stringLength + 1);
             memset(buffer, 0, stringLength + 1);
             memcpy(buffer, begin, stringLength);
-            json->tokens[tokenIndex].type = TOKEN_NUMBER;  
+            json->tokens[tokenIndex].type = NUMBER;  
             json->tokens[tokenIndex].number = atof(buffer);
             free(buffer);   
             tokenIndex++;    
@@ -199,7 +199,7 @@ void freeJSON(JSON *json)
 {
     for (int i = 0; i < TOKEN_COUNT; i++) 
     {
-        if (json->tokens[i].type == TOKEN_STRING) 
+        if (json->tokens[i].type == STRING) 
             free(json->tokens[i].string);  
     }
 }
@@ -228,14 +228,31 @@ int main(int argc, char **argv)
     printf("size of doc : %ld\n",sizeof(doc));
  * This is to know the size	This is to know the size
 */
+//  printf("%d\n",json.tokens[3].type);
+    char buf[256]= { "0" };
+    double temp;
+/*  for (int j=0;j<8;j++){
+//    	if (json.tokens[j].type==0)
+//	    printf("string\n");
+//    	else 
+//	    printf("integer\n");
+	if (json.tokens[j].type == 0)
+		printf("%s\n",json.tokens[j].string);
+	else
+		printf("%f\n",json.tokens[j].number);
+//		continue;
+    }*/
     int i;
 //  while (json.tokens[i].string != NULL){
-    for (i=0;i<sizeof(TOKEN);i++){ // sizeof(TOKEN) == 24
+    for (i=0;i<8;i++){ 
 	// to stop at the end of token list
-	if (strcmp(json.tokens[i].string,"0")==0) break;
+	if (strcmp(json.tokens[i].string,"0")==0) {
+		printf("null point character");
+		break;
+	}
 	// if the end of object list is met
 	// don't print but continue on to the next token in list
-	if (strcmp(json.tokens[i].string,"}")==0) {
+    	if (strcmp(json.tokens[i].string,"}")==0) {
 		i++;
 		continue;
 	// if the end of array list is met
@@ -255,7 +272,7 @@ int main(int argc, char **argv)
 			if (strcmp(json.tokens[i].string,"}")==0) break;
 			printf("\t%s : %s\n",json.tokens[i].string,json.tokens[i+1].string);
 			i+=2;
-		}
+			}
 	// if the beginning of array list is met
 	// don't print but continue on to the next token in list
 	} else if (strcmp(json.tokens[i+1].string,"[")==0) {
@@ -268,12 +285,15 @@ int main(int argc, char **argv)
 			if (strcmp(json.tokens[i].string,"]")==0) break;
 			printf("\t%s\n",json.tokens[i].string);
 			i++;
-		}
+			}
 	// if just regular ( key : value ) then print the following line
-      	} else {
-		printf("%s : %s\n",json.tokens[i].string,json.tokens[i+1].string);
-	    	i++;
-	}	    
+      	} else if (json.tokens[i+1].type == 1) {
+		printf("%s : %d\n",json.tokens[i].string, (int)json.tokens[i+1].number);
+		i++;
+	} else {
+		printf("%s : %s\n",json.tokens[i].string, json.tokens[i+1].string);
+		i++;
+	}
     }
 
     freeJSON(&json);
