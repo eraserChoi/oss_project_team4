@@ -321,15 +321,13 @@ void printJson(JSON *json)
 // the main function to carry out main tasks
 int main(int argc, char **argv)
 {
-//	if (argv[1] == NULL) printf("please give json file name as argument\n");
+	if (argv[1] == NULL) printf("please give json file name as argument\n");
 	int size;
-//	char *doc = readFile(argv[1], &size);
-	char *doc = jsonFile;
+	char *doc = readFile(argv[1], &size);
+//	char *doc = jsonFile;
 	if (doc == NULL) return -1;
-	// initialize json token list
 	JSON json = { 0, };
-	// separate buffer into list of strings
-	size = strlen(doc);
+//	size = strlen(doc);
 	parseJSON(doc, size, &json);
 	for (int j = 0; j < TOKEN_COUNT; j++) {
 		if (json.tokens[j].isAll == true)
@@ -347,18 +345,18 @@ int main(int argc, char **argv)
 				json.tokens[j].begin,
 				json.tokens[j].end);
 		else if (json.tokens[j].isBigList == true && json.tokens[j].isObjectList == true) {
-			printf("[%d]: %s }\n", json.tokens[j].tokenIndex, json.tokens[j].string);
-			printf("( Line Number : %d ~ %d, Object\n", json.tokens[j].begin, json.tokens[j].end);
+			printf("[%d]: %s } ", json.tokens[j].tokenIndex, json.tokens[j].string);
+			printf("( Line Number : %d ~ %d, Object )\n", json.tokens[j].begin, json.tokens[j].end);
 			continue;
 		}
 		else if (json.tokens[j].isBigList == true && json.tokens[j].isArray == true) {
-			printf("[%d]: %s ]\n", json.tokens[j].tokenIndex, json.tokens[j].string);
-			printf("( Line Number : %d ~ %d, Array\n", json.tokens[j].begin, json.tokens[j].end);
+			printf("[%d]: %s ] ", json.tokens[j].tokenIndex, json.tokens[j].string);
+			printf("( Line Number : %d ~ %d, Array )\n", json.tokens[j].begin, json.tokens[j].end);
 			continue;
 		} else break;
 	}
 	freeJSON(&json);
 	free(doc);
-	printf("FINISH");
+	printf("FINISH\n");
 	return 0;
 }
