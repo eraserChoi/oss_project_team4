@@ -438,7 +438,7 @@ void parseJSON(char *doc, int size, JSON *json)
 			free(buffer);
 			tokenIndex++;
 			pos = pos + stringLength + 1;
-			pos++;
+//			pos++;
 		}
 		else
 		{
