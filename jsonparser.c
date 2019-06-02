@@ -128,6 +128,81 @@ void parseJSON(char *doc, int size, JSON *json)
 			while (doc[pos] != '}')
 			{
 				json->tokens[tokenIndex].tokenIndex = tokenIndex;
+				if (doc[pos] == '[')
+				{
+					char *begin = doc + pos;
+					json->tokens[tokenIndex].begin = pos;
+					char *end = strchr(begin, ']');
+					if (end == NULL) break;
+					int stringLength = end - begin;
+					json->tokens[tokenIndex].end = pos + stringLength;
+					json->tokens[tokenIndex].stringLength = stringLength;
+//					json->tokens[tokenIndex].isString = true;
+					json->tokens[tokenIndex].isBigList = true;
+					json->tokens[tokenIndex].string = malloc(stringLength + 1);
+					json->tokens[tokenIndex].isArray = true;
+					memset(json->tokens[tokenIndex].string, 0, stringLength + 1);
+					memcpy(json->tokens[tokenIndex].string, begin, stringLength);
+					tokenIndex++;
+					pos++;
+					while (doc[pos] != ']')
+					{
+						json->tokens[tokenIndex].tokenIndex = tokenIndex;
+						if (doc[pos] == '"')
+						{
+							char *begin = doc + pos + 1;
+							json->tokens[tokenIndex].begin = pos + 1;
+							char *end = strchr(begin, '"');
+							if (end == NULL) break;
+							int stringLength = end - begin;
+							json->tokens[tokenIndex].end = pos + stringLength;
+							json->tokens[tokenIndex].stringLength = stringLength;
+							json->tokens[tokenIndex].isString = true;
+							json->tokens[tokenIndex].string = malloc(stringLength + 1);
+							json->tokens[tokenIndex].isArray = true;
+							memset(json->tokens[tokenIndex].string, 0, stringLength + 1);
+							memcpy(json->tokens[tokenIndex].string, begin, stringLength);
+							tokenIndex++;
+							pos = pos + stringLength + 1;
+						}
+						if (doc[pos] == '0' || doc[pos] == '1'
+							|| doc[pos] == '2'
+							|| doc[pos] == '3'
+							|| doc[pos] == '4'
+							|| doc[pos] == '5'
+							|| doc[pos] == '6'
+							|| doc[pos] == '7'
+							|| doc[pos] == '8'
+							|| doc[pos] == '9'
+							|| doc[pos] == '-')
+						{
+							char *begin = doc + pos;
+							json->tokens[tokenIndex].begin = pos;
+							char *end;
+							char *buffer;
+							end = strchr(doc + pos, ',');
+							if (end == NULL)
+							{
+								end = strchr(doc + pos, '}');
+								if (end == NULL)
+									break;
+							}
+							int stringLength = end - begin;
+							json->tokens[tokenIndex].end = pos + stringLength;
+							json->tokens[tokenIndex].stringLength = stringLength;
+							buffer = malloc(stringLength + 1);
+							memset(buffer, 0, stringLength + 1);
+							memcpy(buffer, begin, stringLength);
+							json->tokens[tokenIndex].isNumber = true;
+							json->tokens[tokenIndex].isArray = true;
+							json->tokens[tokenIndex].number = atof(buffer);
+							free(buffer);
+							tokenIndex++;
+							pos = pos + stringLength + 1;
+						}
+						pos++;
+					}
+				}
 				if (doc[pos] == '"')
 				{
 					char *begin = doc + pos + 1;
@@ -208,12 +283,89 @@ void parseJSON(char *doc, int size, JSON *json)
 			while (doc[pos] != ']')
 			{
 				json->tokens[tokenIndex].tokenIndex = tokenIndex;
+				if (doc[pos] == '{')
+				{
+					char *begin = doc + pos;
+					json->tokens[tokenIndex].begin = pos;
+					char *end = strchr(begin, '}');
+					if (end == NULL)
+						break;
+					int stringLength = end - begin;
+					json->tokens[tokenIndex].end = pos + stringLength;
+					json->tokens[tokenIndex].stringLength = stringLength;
+		//			json->tokens[tokenIndex].isString = true;
+					json->tokens[tokenIndex].isBigList = true;
+					json->tokens[tokenIndex].string = malloc(stringLength + 1);
+					json->tokens[tokenIndex].isObjectList = true;
+					memset(json->tokens[tokenIndex].string, 0, stringLength + 1);
+					memcpy(json->tokens[tokenIndex].string, begin, stringLength);
+					tokenIndex++;
+					pos++;
+					while (doc[pos] != '}')
+					{
+						json->tokens[tokenIndex].tokenIndex = tokenIndex;
+						if (doc[pos] == '"')
+						{
+							char *begin = doc + pos + 1;
+							json->tokens[tokenIndex].begin = pos + 1;
+							char *end = strchr(begin, '"');
+							if (end == NULL) break;
+							int stringLength = end - begin;
+							json->tokens[tokenIndex].end = pos + stringLength;
+							json->tokens[tokenIndex].stringLength = stringLength;
+							json->tokens[tokenIndex].isString = true;
+							json->tokens[tokenIndex].string = malloc(stringLength + 1);
+							json->tokens[tokenIndex].isObjectList = true;
+							memset(json->tokens[tokenIndex].string, 0, stringLength + 1);
+							memcpy(json->tokens[tokenIndex].string, begin, stringLength);
+							tokenIndex++;
+							pos = pos + stringLength + 1;
+						}
+						if (doc[pos] == '0' || doc[pos] == '1'
+							|| doc[pos] == '2'
+							|| doc[pos] == '3'
+							|| doc[pos] == '4'
+							|| doc[pos] == '5'
+							|| doc[pos] == '6'
+							|| doc[pos] == '7'
+							|| doc[pos] == '8'
+							|| doc[pos] == '9'
+							|| doc[pos] == '-')
+						{
+							char *begin = doc + pos;
+							json->tokens[tokenIndex].begin = pos;
+							char *end;
+							char *buffer;
+							end = strchr(doc + pos, ',');
+							if (end == NULL)
+							{
+								end = strchr(doc + pos, '}');
+								if (end == NULL)
+									break;
+							}
+							int stringLength = end - begin;
+							json->tokens[tokenIndex].end = pos + stringLength;
+							json->tokens[tokenIndex].stringLength = stringLength;
+							buffer = malloc(stringLength + 1);
+							memset(buffer, 0, stringLength + 1);
+							memcpy(buffer, begin, stringLength);
+							json->tokens[tokenIndex].isNumber = true;
+							json->tokens[tokenIndex].isObjectList = true;
+							json->tokens[tokenIndex].number = atof(buffer);
+							free(buffer);
+							tokenIndex++;
+							pos = pos + stringLength + 1;
+						}
+						pos++;
+					}
+				}
 				if (doc[pos] == '"')
 				{
 					char *begin = doc + pos + 1;
 					json->tokens[tokenIndex].begin = pos + 1;
 					char *end = strchr(begin, '"');
-					if (end == NULL) break;
+					if (end == NULL)
+						break;
 					int stringLength = end - begin;
 					json->tokens[tokenIndex].end = pos + stringLength;
 					json->tokens[tokenIndex].stringLength = stringLength;
@@ -262,6 +414,7 @@ void parseJSON(char *doc, int size, JSON *json)
 				}
 				pos++;
 			}
+
 		}
 		break;
 		// read numbers and 
@@ -316,7 +469,9 @@ void printJson(JSON *json)
 	;
 }
 
-#define jsonFile "{ \"studentName\": \"foo\", \"studentID\" : 21500266, \"name\" : \"jsmn\", \"keywords\" : \"json\", \"description\" : \"Minimalistic JSON parser/tokenizer in C. It can be easily integrated into resoource-limited or embedded projects\", \"repository\" : { \"type\": \"git\", \"url\" : \"https://github.com/zserge/jsmn.git \", \"score\" : 123, \"test\" : 321, \"It_Is\" : \"over\" }, \"frameworks\": \"*\", \"platforms\" : \"*\", \"examples\" : [ \"ex1.c\", \"ex2.c\", \"ex3.c\", 1234, 5678, \"It_Is_OVER\" ], \"exclude\": \"test\" }"
+#define example1 "{ \"studentName\": \"foo\", \"studentID\" : 21500266, \"name\" : \"jsmn\", \"keywords\" : \"json\", \"description\" : \"Minimalistic JSON parser/tokenizer in C. It can be easily integrated into resoource-limited or embedded projects\", \"repository\" : { \"type\": \"git\", \"url\" : \"https://github.com/zserge/jsmn.git \", \"score\" : 123, \"test\" : 321, \"It_Is\" : \"over\" }, \"frameworks\": \"*\", \"platforms\" : \"*\", \"examples\" : [ \"ex1.c\", \"ex2.c\", \"ex3.c\", 1234, 5678, \"It_Is_OVER\" ], \"exclude\": \"test\" }"
+
+#define example2 "{ \"BASIC COFFEE\": [ {\"name\":\"CAFE TEA\", \"price\":5.50}, {\"name\":\"CAPPUCCINO\", \"price\":6.50}, {\"name\":\"ESPRESSO\", \"price\":6.75}, {\"name\":\"CAFE MOCHA\", \"price\":6.75}, {\"name\":\"CAFE CHAI\", \"price\":5.50} ], \"LATTE & MACCHIATO\": [ {\"name\":\"CAFE LATTE\", \"price\":6.50}, {\"name\":\"VANILLA BEAN LATTE\", \"price\":7.25}, {\"name\":\"ACAI & BERRY LATTE\", \"price\":7.50}, {\"name\":\"MATCHA MACCHIATO\", \"price\":8.00}]}"
 
 // the main function to carry out main tasks
 int main(int argc, char **argv)
@@ -333,26 +488,81 @@ int main(int argc, char **argv)
 		if (json.tokens[j].isAll == true)
 			printf("[%d]: %s\n", json.tokens[j].tokenIndex, json.tokens[j].string);
 		else if (json.tokens[j].isString == true)
-			printf("[%d]: %s ( Line Number : %d ~ %d, String )\n",
+			printf("[%d]: %s ( %d ~ %d, String )\n",
 				json.tokens[j].tokenIndex,
 				json.tokens[j].string,
 				json.tokens[j].begin,
 				json.tokens[j].end);
 		else if (json.tokens[j].isNumber == true)
-			printf("[%d]: %d ( Line Number : %d ~ %d, Number )\n",
+			printf("[%d]: %d ( %d ~ %d, Number )\n",
 				json.tokens[j].tokenIndex,
 				(int)json.tokens[j].number,
 				json.tokens[j].begin,
 				json.tokens[j].end);
 		else if (json.tokens[j].isBigList == true && json.tokens[j].isObjectList == true) {
 			printf("[%d]: %s } ", json.tokens[j].tokenIndex, json.tokens[j].string);
-			printf("( Line Number : %d ~ %d, Object )\n", json.tokens[j].begin, json.tokens[j].end);
-			continue;
-		}
-		else if (json.tokens[j].isBigList == true && json.tokens[j].isArray == true) {
+			printf("( %d ~ %d, Object )\n", json.tokens[j].begin, json.tokens[j].end);
+			j++;
+			if (json.tokens[j].isBigList == true && json.tokens[j].isArray == true) {
+				printf("[%d]: %s } ", json.tokens[j].tokenIndex, json.tokens[j].string);
+				printf("( %d ~ %d, Array )\n", json.tokens[j].begin, json.tokens[j].end);
+				j++;
+				if (json.tokens[j].isString == true)
+					printf("[%d]: %s ( %d ~ %d, String )\n",
+						json.tokens[j].tokenIndex,
+						json.tokens[j].string,
+						json.tokens[j].begin,
+						json.tokens[j].end);
+				else
+					printf("[%d]: %d ( %d ~ %d, Number )\n",
+						json.tokens[j].tokenIndex,
+						(int)json.tokens[j].number,
+						json.tokens[j].begin,
+						json.tokens[j].end);
+			} else if (json.tokens[j].isString == true)
+				printf("[%d]: %s ( %d ~ %d, String )\n",
+					json.tokens[j].tokenIndex,
+					json.tokens[j].string,
+					json.tokens[j].begin,
+					json.tokens[j].end);
+			else
+				printf("[%d]: %d ( %d ~ %d, Number )\n",
+					json.tokens[j].tokenIndex,
+					(int)json.tokens[j].number,
+					json.tokens[j].begin,
+					json.tokens[j].end);
+		} else if (json.tokens[j].isBigList == true && json.tokens[j].isArray == true) {
 			printf("[%d]: %s ] ", json.tokens[j].tokenIndex, json.tokens[j].string);
-			printf("( Line Number : %d ~ %d, Array )\n", json.tokens[j].begin, json.tokens[j].end);
-			continue;
+			printf("( %d ~ %d, Array )\n", json.tokens[j].begin, json.tokens[j].end);
+			j++;
+			if (json.tokens[j].isBigList == true && json.tokens[j].isObjectList == true) {
+				printf("[%d]: %s } ", json.tokens[j].tokenIndex, json.tokens[j].string);
+				printf("( %d ~ %d, Object )\n", json.tokens[j].begin, json.tokens[j].end);
+				j++;
+				if (json.tokens[j].isString == true)
+					printf("[%d]: %s ( %d ~ %d, String )\n",
+						json.tokens[j].tokenIndex,
+						json.tokens[j].string,
+						json.tokens[j].begin,
+						json.tokens[j].end);
+				else
+					printf("[%d]: %d ( %d ~ %d, Number )\n",
+						json.tokens[j].tokenIndex,
+						(int)json.tokens[j].number,
+						json.tokens[j].begin,
+						json.tokens[j].end);
+			} else if (json.tokens[j].isString == true)
+				printf("[%d]: %s ( %d ~ %d, String )\n",
+					json.tokens[j].tokenIndex,
+					json.tokens[j].string,
+					json.tokens[j].begin,
+					json.tokens[j].end);
+			else
+				printf("[%d]: %d ( %d ~ %d, Number )\n",
+					json.tokens[j].tokenIndex,
+					(int)json.tokens[j].number,
+					json.tokens[j].begin,
+					json.tokens[j].end);
 		} else break;
 	}
 	freeJSON(&json);
