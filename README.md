@@ -6,8 +6,6 @@
 ## 2. Lee, JooWan
 ## 3. Choi, JiWoo
 
-==============================
-
 # 1. WHAT'S THE PROJECT ABOUT?
 ...
 The purpose of this project is to learn about JSON files and make various applications through parsing these script files. 
@@ -29,7 +27,7 @@ This project is useful in understanding the usage of Json files, especially to t
 ...
 
 # 5. HOW DO I GET STARTED?
-There aren't much better ways to learn Json files done actually following some examples.
+There aren't much better ways to learn Json files than actually following some examples.
 ...
 1. Easy way is to look up some example code in the internet and follow it
 2. Parsing depends on individual coding level of skills. one can increase their skills only by practice
@@ -38,7 +36,6 @@ There aren't much better ways to learn Json files done actually following some e
 
 # 6. WHERE CAN I GET MORE HELP IF I NEED IT?
 Below are some of the links that might help get things started :
-for [JSON file]
-link : https://www.tutorialspoint.com/json
-for [JSON parsing]
-link : https://zeddios.tistory.com/148?category=685736
+...
+1. for [JSON file] link : https://www.tutorialspoint.com/json
+2. for [JSON parsing] link : https://zeddios.tistory.com/148?category=685736
