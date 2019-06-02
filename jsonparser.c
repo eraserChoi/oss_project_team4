@@ -60,9 +60,7 @@ char *readFile(char *filename, int *readSize)
 // each tokens
 void parseJSON(char *doc, int size, JSON *json)
 {
-	// points to the position of index in token list
 	int tokenIndex = 0;
-	// points to position of item in buffer 
 	int pos = 0;
 	if (doc[pos] != '{')
 		return;
@@ -78,7 +76,6 @@ void parseJSON(char *doc, int size, JSON *json)
 	memcpy(json->tokens[tokenIndex].string, begin, stringLength);
 	tokenIndex++;
 	pos++;
-	// applies to all ( key : value ) objects    
 	while (pos < size)
 	{
 		if (doc[pos] == '"')
@@ -117,139 +114,6 @@ void parseJSON(char *doc, int size, JSON *json)
 			memcpy(json->tokens[tokenIndex].string, begin, stringLength);
 			tokenIndex++;
 			pos++;
-/*				while (doc[pos] != '}')
-			{
-				json->tokens[tokenIndex].tokenIndex = tokenIndex;
-				if (doc[pos] == '[')
-				{
-					char *begin = doc + pos;
-					json->tokens[tokenIndex].begin = pos;
-					char *end = strchr(begin, ']');
-					if (end == NULL) break;
-					int stringLength = end - begin;
-					json->tokens[tokenIndex].end = pos + stringLength;
-					json->tokens[tokenIndex].stringLength = stringLength;
-//						json->tokens[tokenIndex].isString = true;
-					json->tokens[tokenIndex].isBigList = true;
-					json->tokens[tokenIndex].string = malloc(stringLength + 1);
-					json->tokens[tokenIndex].isArray = true;
-					memset(json->tokens[tokenIndex].string, 0, stringLength + 1);
-					memcpy(json->tokens[tokenIndex].string, begin, stringLength);
-					tokenIndex++;
-					pos++;
-					while (doc[pos] != ']')
-					{
-						json->tokens[tokenIndex].tokenIndex = tokenIndex;
-						if (doc[pos] == '"')
-						{
-							char *begin = doc + pos + 1;
-							json->tokens[tokenIndex].begin = pos + 1;
-							char *end = strchr(begin, '"');
-							if (end == NULL) break;
-							int stringLength = end - begin;
-							json->tokens[tokenIndex].end = pos + stringLength;
-							json->tokens[tokenIndex].stringLength = stringLength;
-							json->tokens[tokenIndex].isString = true;
-							json->tokens[tokenIndex].string = malloc(stringLength + 1);
-							json->tokens[tokenIndex].isArray = true;
-							memset(json->tokens[tokenIndex].string, 0, stringLength + 1);
-							memcpy(json->tokens[tokenIndex].string, begin, stringLength);
-							tokenIndex++;
-							pos = pos + stringLength + 1;
-						}
-						if (doc[pos] == '0' || doc[pos] == '1'
-							|| doc[pos] == '2'
-							|| doc[pos] == '3'
-							|| doc[pos] == '4'
-							|| doc[pos] == '5'
-							|| doc[pos] == '6'
-							|| doc[pos] == '7'
-							|| doc[pos] == '8'
-							|| doc[pos] == '9'
-							|| doc[pos] == '-')
-						{
-							char *begin = doc + pos;
-							json->tokens[tokenIndex].begin = pos;
-							char *end;
-							char *buffer;
-							end = strchr(doc + pos, ',');
-							if (end == NULL)
-							{
-								end = strchr(doc + pos, '}');
-								if (end == NULL)
-									break;
-							}
-							int stringLength = end - begin;
-							json->tokens[tokenIndex].end = pos + stringLength;
-							json->tokens[tokenIndex].stringLength = stringLength;
-							buffer = malloc(stringLength + 1);
-							memset(buffer, 0, stringLength + 1);
-							memcpy(buffer, begin, stringLength);
-							json->tokens[tokenIndex].isNumber = true;
-							json->tokens[tokenIndex].isArray = true;
-							json->tokens[tokenIndex].number = atof(buffer);
-							free(buffer);
-							tokenIndex++;
-							pos = pos + stringLength + 1;
-						}
-						pos++;
-					}
-				}
-				if (doc[pos] == '"')
-				{
-					char *begin = doc + pos + 1;
-					json->tokens[tokenIndex].begin = pos + 1;
-					char *end = strchr(begin, '"');
-					if (end == NULL)
-						break;
-					int stringLength = end - begin;
-					json->tokens[tokenIndex].end = pos + stringLength;
-					json->tokens[tokenIndex].stringLength = stringLength;
-					json->tokens[tokenIndex].isString = true;
-					json->tokens[tokenIndex].string = malloc(stringLength + 1);
-					json->tokens[tokenIndex].isObjectList = true;
-					memset(json->tokens[tokenIndex].string, 0, stringLength + 1);
-					memcpy(json->tokens[tokenIndex].string, begin, stringLength);
-					tokenIndex++;
-					pos = pos + stringLength + 1;
-				}
-				if (doc[pos] == '0' || doc[pos] == '1'
-					|| doc[pos] == '2'
-					|| doc[pos] == '3'
-					|| doc[pos] == '4'
-					|| doc[pos] == '5'
-					|| doc[pos] == '6'
-					|| doc[pos] == '7'
-					|| doc[pos] == '8'
-					|| doc[pos] == '9'
-					|| doc[pos] == '-')
-				{
-					char *begin = doc + pos;
-					json->tokens[tokenIndex].begin = pos;
-					char *end;
-					char *buffer;
-					end = strchr(doc + pos, ',');
-					if (end == NULL)
-					{
-						end = strchr(doc + pos, '}');
-						if (end == NULL)
-							break;
-					}
-					int stringLength = end - begin;
-					json->tokens[tokenIndex].end = pos + stringLength;
-					json->tokens[tokenIndex].stringLength = stringLength;
-					buffer = malloc(stringLength + 1);
-					memset(buffer, 0, stringLength + 1);
-					memcpy(buffer, begin, stringLength);
-					json->tokens[tokenIndex].isNumber = true;
-					json->tokens[tokenIndex].isObjectList = true;
-					json->tokens[tokenIndex].number = atof(buffer);
-					free(buffer);
-					tokenIndex++;
-					pos = pos + stringLength + 1;
-				}
-				pos++;
-			} */
 		}
 		else if (doc[pos] == '[')
 		{
@@ -268,140 +132,6 @@ void parseJSON(char *doc, int size, JSON *json)
 			memcpy(json->tokens[tokenIndex].string, begin, stringLength);
 			tokenIndex++;
 			pos++;
-/*				while (doc[pos] != ']')
-			{
-				json->tokens[tokenIndex].tokenIndex = tokenIndex;
-				if (doc[pos] == '{')
-				{
-					char *begin = doc + pos;
-					json->tokens[tokenIndex].begin = pos;
-					char *end = strchr(begin, '}');
-					if (end == NULL)
-						break;
-					int stringLength = end - begin;
-					json->tokens[tokenIndex].end = pos + stringLength;
-					json->tokens[tokenIndex].stringLength = stringLength;
-//						json->tokens[tokenIndex].isString = true;
-					json->tokens[tokenIndex].isBigList = true;
-					json->tokens[tokenIndex].string = malloc(stringLength + 1);
-					json->tokens[tokenIndex].isObjectList = true;
-					memset(json->tokens[tokenIndex].string, 0, stringLength + 1);
-					memcpy(json->tokens[tokenIndex].string, begin, stringLength);
-					tokenIndex++;
-					pos++;
-					while (doc[pos] != '}')
-					{
-						json->tokens[tokenIndex].tokenIndex = tokenIndex;
-						if (doc[pos] == '"')
-						{
-							char *begin = doc + pos + 1;
-							json->tokens[tokenIndex].begin = pos + 1;
-							char *end = strchr(begin, '"');
-							if (end == NULL) break;
-							int stringLength = end - begin;
-							json->tokens[tokenIndex].end = pos + stringLength;
-							json->tokens[tokenIndex].stringLength = stringLength;
-							json->tokens[tokenIndex].isString = true;
-							json->tokens[tokenIndex].string = malloc(stringLength + 1);
-							json->tokens[tokenIndex].isObjectList = true;
-							memset(json->tokens[tokenIndex].string, 0, stringLength + 1);
-							memcpy(json->tokens[tokenIndex].string, begin, stringLength);
-							tokenIndex++;
-							pos = pos + stringLength + 1;
-						}
-						if (doc[pos] == '0' || doc[pos] == '1'
-							|| doc[pos] == '2'
-							|| doc[pos] == '3'
-							|| doc[pos] == '4'
-							|| doc[pos] == '5'
-							|| doc[pos] == '6'
-							|| doc[pos] == '7'
-							|| doc[pos] == '8'
-							|| doc[pos] == '9'
-							|| doc[pos] == '-')
-						{
-							char *begin = doc + pos;
-							json->tokens[tokenIndex].begin = pos;
-							char *end;
-							char *buffer;
-							end = strchr(doc + pos, ',');
-							if (end == NULL)
-							{
-								end = strchr(doc + pos, '}');
-								if (end == NULL)
-									break;
-							}
-							int stringLength = end - begin;
-							json->tokens[tokenIndex].end = pos + stringLength;
-							json->tokens[tokenIndex].stringLength = stringLength;
-							buffer = malloc(stringLength + 1);
-							memset(buffer, 0, stringLength + 1);
-							memcpy(buffer, begin, stringLength);
-							json->tokens[tokenIndex].isNumber = true;
-							json->tokens[tokenIndex].isObjectList = true;
-							json->tokens[tokenIndex].number = atof(buffer);
-							free(buffer);
-							tokenIndex++;
-							pos = pos + stringLength + 1;
-						}
-						pos++;
-					}
-				}
-				if (doc[pos] == '"')
-				{
-					char *begin = doc + pos + 1;
-					json->tokens[tokenIndex].begin = pos + 1;
-					char *end = strchr(begin, '"');
-					if (end == NULL)
-						break;
-					int stringLength = end - begin;
-					json->tokens[tokenIndex].end = pos + stringLength;
-					json->tokens[tokenIndex].stringLength = stringLength;
-					json->tokens[tokenIndex].isString = true;
-					json->tokens[tokenIndex].string = malloc(stringLength + 1);
-					json->tokens[tokenIndex].isArray = true;
-					memset(json->tokens[tokenIndex].string, 0, stringLength + 1);
-					memcpy(json->tokens[tokenIndex].string, begin, stringLength);
-					tokenIndex++;
-					pos = pos + stringLength + 1;
-				}
-				if (doc[pos] == '0' || doc[pos] == '1'
-					|| doc[pos] == '2'
-					|| doc[pos] == '3'
-					|| doc[pos] == '4'
-					|| doc[pos] == '5'
-					|| doc[pos] == '6'
-					|| doc[pos] == '7'
-					|| doc[pos] == '8'
-					|| doc[pos] == '9'
-					|| doc[pos] == '-')
-				{
-					char *begin = doc + pos;
-					json->tokens[tokenIndex].begin = pos;
-					char *end;
-					char *buffer;
-					end = strchr(doc + pos, ',');
-					if (end == NULL)
-					{
-						end = strchr(doc + pos, '}');
-						if (end == NULL)
-							break;
-					}
-					int stringLength = end - begin;
-					json->tokens[tokenIndex].end = pos + stringLength;
-					json->tokens[tokenIndex].stringLength = stringLength;
-					buffer = malloc(stringLength + 1);
-					memset(buffer, 0, stringLength + 1);
-					memcpy(buffer, begin, stringLength);
-					json->tokens[tokenIndex].isNumber = true;
-					json->tokens[tokenIndex].isArray = true;
-					json->tokens[tokenIndex].number = atof(buffer);
-					free(buffer);
-					tokenIndex++;
-					pos = pos + stringLength + 1;
-				}
-				pos++;
-			} */
 		}
 		else if (doc[pos] == '0' 
 							|| doc[pos] == '1'
@@ -438,7 +168,6 @@ void parseJSON(char *doc, int size, JSON *json)
 			free(buffer);
 			tokenIndex++;
 			pos = pos + stringLength + 1;
-//			pos++;
 		}
 		else
 		{
