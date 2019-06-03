@@ -1,10 +1,10 @@
 [PROJECT] OPEN SOURCE SOFTWARE
 ==============================
 
-# TEAM 4 PARTICIPANTS
-## 1. Park, SungWoon
-## 2. Lee, JooWan
-## 3. Choi, JiWoo
+# TEAM 4 MEMBERS
+## 1. Park, SungWoon 21500266
+## 2. Lee, JooWan 21500554
+## 3. Choi, JiWoo 21600740
 
 # 1. WHAT'S THE PROJECT ABOUT?
 ...
