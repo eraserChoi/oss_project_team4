@@ -58,7 +58,7 @@ char *readFile(char *filename, int *readSize)
 // utility function to parse 
 // the contents of buffer into
 // each tokens
-void parseJSON(char *doc, int size, JSON *json)
+void parseJSON(char * doc, int size, JSON * json)
 {
 	int tokenIndex = 0;
 	int pos = 0;
@@ -209,28 +209,52 @@ int main(int argc, char **argv)
 	JSON json = { 0, };
 //	size = strlen(doc);
 	parseJSON(doc, size, &json);
+	int count = 0;
+	for (int i = 0; i<TOKEN_COUNT; i++) {
+		int s = 0;
+		if(i%2 == 0) s = 0;
+		else if (json.tokens[i].isBigList == true) { 
+			s = 1; 
+			count++; 
+		}
+		else if (json.tokens[i].isObjectList == true || json.tokens[i].isArray == true) continue;
+		else { 
+			s = 1; 
+			count++; 
+		}
+	}
 	for (int j = 0; j < TOKEN_COUNT; j++) {
-		if (json.tokens[j].isAll == true)
-			printf("[%d]: %s\n", json.tokens[j].tokenIndex, json.tokens[j].string);
+		int size;
+		if(j%2 == 0) size = 0;
+		else if ((json.tokens[j].isBigList == true && json.tokens[j].isObjectList == true )
+				|| (json.tokens[j].isBigList == true && json.tokens[j].isArray == true)) size = 1;
+		else if (json.tokens[j].isAll == true ) size = count;
+		else size = 1;
+		if (json.tokens[j].isAll == true) {
+			printf("[%d]: %s ", json.tokens[j].tokenIndex, json.tokens[j].string);
+			printf("( size : %d , %d ~ %d, Object )\n",size, json.tokens[j].begin, json.tokens[j].end);
+		}
 		else if (json.tokens[j].isString == true)
-			printf("[%d]: %s ( %d ~ %d, String )\n",
+			printf("[%d]: %s ( size : %d , %d ~ %d, String )\n",
 				json.tokens[j].tokenIndex,
 				json.tokens[j].string,
+				size,
 				json.tokens[j].begin,
 				json.tokens[j].end);
 		else if (json.tokens[j].isNumber == true)
-			printf("[%d]: %d ( %d ~ %d, Number )\n",
+			printf("[%d]: %d ( size : %d , %d ~ %d, Number )\n",
 				json.tokens[j].tokenIndex,
 				(int)json.tokens[j].number,
+				size,
 				json.tokens[j].begin,
 				json.tokens[j].end);
 		else if (json.tokens[j].isBigList == true && json.tokens[j].isObjectList == true) {
 			printf("[%d]: %s } ", json.tokens[j].tokenIndex, json.tokens[j].string);
-			printf("( %d ~ %d, Object )\n", json.tokens[j].begin, json.tokens[j].end);
+			printf("( size : %d , %d ~ %d, Object )\n",size, json.tokens[j].begin, json.tokens[j].end);
 		}
 		else if (json.tokens[j].isBigList == true && json.tokens[j].isArray == true) {
 			printf("[%d]: %s } ", json.tokens[j].tokenIndex, json.tokens[j].string);
-			printf("( %d ~ %d, Array )\n", json.tokens[j].begin, json.tokens[j].end);
+			printf("( size : %d , %d ~ %d, Array )\n", size, json.tokens[j].begin, json.tokens[j].end);
 		}
 		else break;
 	}
